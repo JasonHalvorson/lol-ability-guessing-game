@@ -6,15 +6,20 @@ export async function getStaticProps() {
     const championList = {};
 
     // Get latest version of League
+    console.log('Getting latest version of League...');
     const versions = await fetch('https://ddragon.leagueoflegends.com/api/versions.json');
     const versionsJson = await versions.json();
     const latest = versionsJson[0];
+    console.log('Latest version of League:', latest);
 
     // Get list of champions
+    console.log('Getting list of champions...');
     const champions = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion.json`);
     const championsJson = await champions.json();
+    console.log('Champions:', Object.keys(championsJson.data).length);
 
-    // Format into object which is cached for
+    // Format into object which is cached for 1 day
+    console.log('Formatting champion names and abilities into object...');
     for (const champion in championsJson.data) {
         const championData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion/${champion}.json`);
         const championJson = await championData.json();
@@ -41,6 +46,8 @@ export async function getStaticProps() {
             },
         };
     }
+
+    console.log('Done!');
 
     if (versions.status !== 200) {
         throw new Error('Failed to fetch API');
