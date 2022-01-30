@@ -1,5 +1,5 @@
-import Head from 'next/head';
 import { useState } from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 
 export async function getStaticProps() {
@@ -14,6 +14,7 @@ export async function getStaticProps() {
     const champions = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion.json`);
     const championsJson = await champions.json();
 
+    // Format into object which is cached for
     for (const champion in championsJson.data) {
         const championData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion/${champion}.json`);
         const championJson = await championData.json();
@@ -49,7 +50,8 @@ export async function getStaticProps() {
         props: {
             championList,
         },
-        revalidate: 50000,
+        // If the page gets a request after the list has been cached for 24 hours, it will rerun getStaticProps()
+        revalidate: 86400,
     };
 }
 
