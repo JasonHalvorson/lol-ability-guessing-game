@@ -1,57 +1,10 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
+import getChampions from '../utils/getChampions';
 
 export async function getStaticProps() {
-    const championList = {};
-
-    // Get latest version of League
-    console.log('Getting latest version of League...');
-    const versions = await fetch('https://ddragon.leagueoflegends.com/api/versions.json');
-    const versionsJson = await versions.json();
-    const latest = versionsJson[0];
-    console.log('Latest version of League:', latest);
-
-    // Get list of champions
-    console.log('Getting list of champions...');
-    const champions = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion.json`);
-    const championsJson = await champions.json();
-    console.log('Champions:', Object.keys(championsJson.data).length);
-
-    // Format into object which is cached for 1 day
-    console.log('Formatting champion names and abilities into object...');
-    for (const champion in championsJson.data) {
-        const championData = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latest}/data/en_US/champion/${champion}.json`);
-        const championJson = await championData.json();
-
-        championList[champion] = {
-            name: championJson.data[champion].name,
-            abilities: {
-                Q: {
-                    name: championJson.data[champion].spells[0].name,
-                    image: `http://ddragon.leagueoflegends.com/cdn/${latest}/img/spell/${championJson.data[champion].spells[0].id}.png`,
-                },
-                W: {
-                    name: championJson.data[champion].spells[1].name,
-                    image: `http://ddragon.leagueoflegends.com/cdn/${latest}/img/spell/${championJson.data[champion].spells[1].id}.png`,
-                },
-                E: {
-                    name: championJson.data[champion].spells[2].name,
-                    image: `http://ddragon.leagueoflegends.com/cdn/${latest}/img/spell/${championJson.data[champion].spells[2].id}.png`,
-                },
-                R: {
-                    name: championJson.data[champion].spells[3].name,
-                    image: `http://ddragon.leagueoflegends.com/cdn/${latest}/img/spell/${championJson.data[champion].spells[3].id}.png`,
-                },
-            },
-        };
-    }
-
-    console.log('Done!');
-
-    if (versions.status !== 200) {
-        throw new Error('Failed to fetch API');
-    }
+    const championList = await getChampions();
 
     return {
         props: {
@@ -67,6 +20,7 @@ export default function Game({ championList }) {
     const [correct, setCorrect] = useState(false);
 
     const [champion, setChampion] = useState('');
+    const [championSplash, setChampionSplash] = useState('');
     const [abilityKey, setAbilityKey] = useState('');
     const [ability, setAbility] = useState('');
     const [abilityImage, setAbilityImage] = useState([]);
@@ -89,11 +43,13 @@ export default function Game({ championList }) {
 
     const getNewAbility = (championList) => {
         const newChampion = Object.values(championList)[Math.floor(Math.random() * Object.values(championList).length)];
+        const newChampionSplash = `/images/${newChampion.image}`;
         const newAbilityKey = Object.keys(newChampion.abilities)[Math.floor(Math.random() * Object.keys(newChampion.abilities).length)];
         const newAbility = newChampion.abilities[newAbilityKey];
         const newAbilityImage = [newAbility.image, `${newChampion.name} ${newAbilityKey}`];
 
         setChampion(newChampion);
+        setChampionSplash(newChampionSplash);
         setAbilityKey(newAbilityKey);
         setAbility(newAbility);
         setAbilityImage(newAbilityImage);
@@ -112,6 +68,12 @@ export default function Game({ championList }) {
 
     return (
         <div className="min-h-screen bg-gray-800 py-6 flex flex-col justify-center relative overflow-hidden sm:py-12">
+            {championSplash && (
+                <div className="absolute inset-0">
+                    <Image className="h-full w-full object-cover" src={championSplash} layout="fill" alt={`${champion.name} Splash Art`} />
+                    <div className="absolute inset-0 bg-purple-700 mix-blend-multiply" />
+                </div>
+            )}
             <Head>
                 <title>LoL Ability Guessing Game</title>
                 <link rel="icon" href="/favicon.ico" />
