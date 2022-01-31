@@ -34,4 +34,4 @@ yarn-error.log*
 .vercel
 
 # Images (created on build time)
-/public/images/
+/public/images/*
