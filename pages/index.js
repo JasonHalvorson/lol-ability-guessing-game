@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import getChampions from '../utils/getChampions';
+import HistoryContainer from '../components/HistoryContainer';
+import { ClockIcon } from '@heroicons/react/outline';
 
 export async function getStaticProps() {
     const championList = await getChampions();
@@ -18,6 +20,8 @@ export async function getStaticProps() {
 export default function Game({ championList }) {
     const [guess, setGuess] = useState('');
     const [correct, setCorrect] = useState(false);
+    const [history, setHistory] = useState([]);
+    const [openHistory, setOpenHistory] = useState(false);
 
     const [champion, setChampion] = useState('');
     const [championSplash, setChampionSplash] = useState('');
@@ -42,6 +46,10 @@ export default function Game({ championList }) {
     };
 
     const getNewAbility = (championList) => {
+        if (champion) {
+            setHistory([{ champion: champion.name, abilityKey, ability, abilityImage, correct }, ...history]);
+        }
+
         const newChampion = Object.values(championList)[Math.floor(Math.random() * Object.values(championList).length)];
         const newChampionSplash = `/images/${newChampion.image}`;
         const newAbilityKey = Object.keys(newChampion.abilities)[Math.floor(Math.random() * Object.keys(newChampion.abilities).length)];
@@ -95,8 +103,13 @@ export default function Game({ championList }) {
                                 </label>
                                 <input onChange={handleGuess} onKeyDown={handleEnter} value={correct ? ability.name : guess} type="text" name="guess" id="guess" className={`shadow-sm block w-full sm:text-sm border-gray-700 bg-gray-800 rounded-md text-center ${correct ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-purple-500 focus:border-purple-500'}`} />
                             </div>
-                            <div className="mt-8 text-center">
-                                <button onClick={() => getNewAbility(championList)} id="newAbilityButton" type="button" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            <div className={`mt-8 grid ${history.length > 0 ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
+                                {history.length > 0 && (
+                                    <button onClick={() => setOpenHistory(true)} type="button" className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-transparent hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 place-self-start">
+                                        <ClockIcon className="h-6 w-6" aria-hidden="true" />
+                                    </button>
+                                )}
+                                <button onClick={() => getNewAbility(championList)} id="newAbilityButton" type="button" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 place-self-end md:place-self-center">
                                     Get new ability
                                 </button>
                             </div>
@@ -110,6 +123,7 @@ export default function Game({ championList }) {
                     )}
                 </div>
             </div>
+            {history.length > 0 && <HistoryContainer history={history} open={openHistory} setOpen={setOpenHistory} />}
         </div>
     );
 }
