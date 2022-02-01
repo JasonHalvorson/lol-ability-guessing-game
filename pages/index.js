@@ -83,8 +83,25 @@ export default function Game({ championList }) {
                 </div>
             )}
             <Head>
-                <title>LoL Ability Guessing Game</title>
+                {/* HTML Meta Tags */}
+                <title>League of Legends Ability Guessing Game</title>
+                <meta name="description" content="Test your League of Legends knowledge in this Ability name guessing game!" />
                 <link rel="icon" href="/favicon.ico" />
+
+                {/* Facebook Meta Tags */}
+                <meta property="og:url" content="https://lol-ability-guessing-game.vercel.app/" />
+                <meta property="og:type" content="website" />
+                <meta property="og:title" content="League of Legends Ability Guessing Game" />
+                <meta property="og:description" content="Test your League of Legends knowledge in this Ability name guessing game!" />
+                <meta property="og:image" content="https://lol-ability-guessing-game.vercel.app/lol-ability-guessing-game-og.png" />
+
+                {/* Twitter Meta Tags */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta property="twitter:domain" content="lol-ability-guessing-game.vercel.app" />
+                <meta property="twitter:url" content="https://lol-ability-guessing-game.vercel.app/" />
+                <meta name="twitter:title" content="League of Legends Ability Guessing Game" />
+                <meta name="twitter:description" content="Test your League of Legends knowledge in this Ability name guessing game!" />
+                <meta name="twitter:image" content="https://lol-ability-guessing-game.vercel.app/lol-ability-guessing-game-og.png" />
             </Head>
             <div className="relative px-6 pt-10 pb-8 bg-gray-900 shadow-xl ring-1 ring-gray-900/5 sm:max-w-xl sm:mx-auto sm:rounded-lg sm:px-10 text-white">
                 <div className="relative flex flex-col justify-center">
