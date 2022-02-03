@@ -132,7 +132,7 @@ export default function Game({ championList }) {
                 <meta name="twitter:description" content="Test your League of Legends knowledge in this Ability name guessing game!" />
                 <meta name="twitter:image" content="https://lol-ability-guessing-game.vercel.app/lol-ability-guessing-game-og.png" />
             </Head>
-            <div className="relative px-6 pt-10 pb-8 bg-gray-900 shadow-xl ring-1 ring-gray-900/5 sm:max-w-xl sm:mx-auto sm:rounded-lg sm:px-10 text-white">
+            <div className={`relative px-6 pt-10 pb-8 bg-gray-900 shadow-xl sm:max-w-xl sm:mx-auto sm:rounded-lg sm:px-10 text-white border-2 transition-colors duration-150 ${correct ? 'border-green-500' : 'border-gray-900'}`}>
                 <div className="relative flex flex-col justify-center">
                     <h1 className="text-4xl font-bold text-center">LoL Ability Guessing Game</h1>
                     {champion ? (
@@ -147,7 +147,7 @@ export default function Game({ championList }) {
                                 <label htmlFor="guess" className="sr-only">
                                     Guess
                                 </label>
-                                <input onChange={handleGuess} onKeyDown={handleEnter} value={correct ? ability.name : guess} type="text" name="guess" id="guess" className={`shadow-sm block w-full sm:text-sm border-gray-700 bg-gray-800 rounded-md text-center ${correct ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-purple-500 focus:border-purple-500'}`} />
+                                <input onChange={handleGuess} onKeyDown={handleEnter} value={correct ? ability.name : guess} type="text" name="guess" id="guess" className={`shadow-sm block w-full sm:text-sm border-gray-700 bg-gray-800 rounded-md text-center transiton-colors duration-150 ${correct ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-purple-500 focus:border-purple-500'}`} />
                             </div>
                             <div className={`mt-8 grid grid-cols-12`}>
                                 <div className="col-span-2">
@@ -165,7 +165,7 @@ export default function Game({ championList }) {
                                 <div className="col-span-2 ml-auto">
                                     {history.length > 0 && (
                                         <div className="flex flex-row">
-                                            <p className={`inline-flex items-center p-1.5 rounded-full shadow-sm text-white ${score.percentColor}`}>{score.percent}%</p>
+                                            <p className={`inline-flex items-center p-1.5 rounded-full shadow-sm text-white transition-colors duration-300 ${score.percentColor}`}>{score.percent}%</p>
                                             <div className="flex flex-col">
                                                 <span className="inline-flex items-center px-2.5 py-0.5 mb-0.5 rounded-full text-xs font-medium bg-green-400 text-gray-900 self-center">{score.correct}</span>
                                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-400 text-gray-900 self-center">{score.incorrect}</span>
