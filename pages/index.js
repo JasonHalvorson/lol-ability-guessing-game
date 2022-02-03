@@ -19,6 +19,7 @@ export async function getStaticProps() {
 
 export default function Game({ championList }) {
     const [guess, setGuess] = useState('');
+    const [score, setScore] = useState({ correct: 0, incorrect: 0, percent: null, percentColor: 0 });
     const [correct, setCorrect] = useState(false);
     const [history, setHistory] = useState([]);
     const [openHistory, setOpenHistory] = useState(false);
@@ -29,12 +30,34 @@ export default function Game({ championList }) {
     const [ability, setAbility] = useState('');
     const [abilityImage, setAbilityImage] = useState([]);
 
+    const calcPercent = (correct, total) => ((correct / total) * 100).toFixed(0);
+
+    const calcPercentColor = (percent) => {
+        if (percent >= 100) return 'bg-purple-700';
+        if (percent >= 95) return 'bg-violet-700';
+        if (percent >= 90) return 'bg-indigo-700';
+        if (percent >= 85) return 'bg-blue-700';
+        if (percent >= 80) return 'bg-sky-700';
+        if (percent >= 75) return 'bg-cyan-700';
+        if (percent >= 70) return 'bg-teal-700';
+        if (percent >= 60) return 'bg-emerald-700';
+        if (percent >= 50) return 'bg-green-700';
+        if (percent >= 40) return 'bg-lime-700';
+        if (percent >= 30) return 'bg-yellow-700';
+        if (percent >= 20) return 'bg-amber-700';
+        if (percent >= 0) return 'bg-red-700';
+    };
+
     const handleGuess = (event) => {
         const userGuess = event.target.value;
         setGuess(userGuess);
 
         if (userGuess.replace(/[^A-Z0-9]+/gi, '').toLowerCase() === ability.name.replace(/[^A-Z0-9]+/gi, '').toLowerCase()) {
             setCorrect(true);
+            const newCorrectScore = (score.correct += 1);
+            const newPercent = calcPercent(newCorrectScore, newCorrectScore + score.incorrect);
+            const newPercentColor = calcPercentColor(newPercent);
+            setScore({ ...score, correct: newCorrectScore, percent: newPercent, percentColor: newPercentColor });
         }
     };
 
@@ -46,16 +69,22 @@ export default function Game({ championList }) {
     };
 
     const getNewAbility = (championList) => {
-        if (champion) {
-            setHistory([{ champion: champion.name, abilityKey, ability, abilityImage, correct }, ...history]);
-        }
-
         const newChampion = Object.values(championList)[Math.floor(Math.random() * Object.values(championList).length)];
         const newChampionSplash = `/images/${newChampion.image}`;
         const newAbilityKey = Object.keys(newChampion.abilities)[Math.floor(Math.random() * Object.keys(newChampion.abilities).length)];
         const newAbility = newChampion.abilities[newAbilityKey];
         const newAbilityImage = [newAbility.image, `${newChampion.name} ${newAbilityKey}`];
 
+        if (champion) {
+            setHistory([{ champion: champion.name, abilityKey, ability, abilityImage, correct }, ...history]);
+
+            if (!correct) {
+                const newIncorrectScore = (score.incorrect += 1);
+                const newPercent = calcPercent(score.correct, score.correct + newIncorrectScore);
+                const newPercentColor = calcPercentColor(newPercent);
+                setScore({ ...score, incorrect: newIncorrectScore, percent: newPercent, percentColor: newPercentColor });
+            }
+        }
         setChampion(newChampion);
         setChampionSplash(newChampionSplash);
         setAbilityKey(newAbilityKey);
@@ -120,15 +149,30 @@ export default function Game({ championList }) {
                                 </label>
                                 <input onChange={handleGuess} onKeyDown={handleEnter} value={correct ? ability.name : guess} type="text" name="guess" id="guess" className={`shadow-sm block w-full sm:text-sm border-gray-700 bg-gray-800 rounded-md text-center ${correct ? 'focus:ring-green-500 focus:border-green-500' : 'focus:ring-purple-500 focus:border-purple-500'}`} />
                             </div>
-                            <div className={`mt-8 grid ${history.length > 0 ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1'}`}>
-                                {history.length > 0 && (
-                                    <button onClick={() => setOpenHistory(true)} type="button" className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-transparent hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 place-self-start">
-                                        <ClockIcon className="h-6 w-6" aria-hidden="true" />
+                            <div className={`mt-8 grid grid-cols-12`}>
+                                <div className="col-span-2">
+                                    {history.length > 0 && (
+                                        <button onClick={() => setOpenHistory(true)} type="button" className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-transparent hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                            <ClockIcon className="h-6 w-6" aria-hidden="true" />
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="col-span-8 mx-auto">
+                                    <button onClick={() => getNewAbility(championList)} id="newAbilityButton" type="button" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                        Get New Ability
                                     </button>
-                                )}
-                                <button onClick={() => getNewAbility(championList)} id="newAbilityButton" type="button" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 place-self-end md:place-self-center">
-                                    Get new ability
-                                </button>
+                                </div>
+                                <div className="col-span-2 ml-auto">
+                                    {history.length > 0 && (
+                                        <div className="flex flex-row">
+                                            <p className={`inline-flex items-center p-1.5 rounded-full shadow-sm text-white ${score.percentColor}`}>{score.percent}%</p>
+                                            <div className="flex flex-col">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 mb-0.5 rounded-full text-xs font-medium bg-green-400 text-gray-900 self-center">{score.correct}</span>
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-400 text-gray-900 self-center">{score.incorrect}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ) : (
