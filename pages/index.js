@@ -108,7 +108,7 @@ export default function Game({ championList }) {
             {championSplash && (
                 <div className="absolute inset-0">
                     <Image className="h-full w-full object-cover" src={championSplash} layout="fill" alt={`${champion.name} Splash Art`} />
-                    <div className="absolute inset-0 bg-purple-700 mix-blend-multiply" />
+                    <div className="absolute inset-0 bg-gray-500 mix-blend-multiply" />
                 </div>
             )}
             <Head>
