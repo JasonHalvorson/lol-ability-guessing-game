@@ -16,7 +16,7 @@ export default function History({ history }) {
                                 <>
                                     <div className="relative">
                                         <span className="absolute h-10 w-10 rounded-full bg-gray-900 flex items-center justify-center ring-8 ring-gray-900" />
-                                        <Image width={40} height={40} className="rounded-full" src={historyEntry.abilityImage[0]} alt={historyEntry.abilityImage[1]} />
+                                        <Image width={40} height={40} className="rounded-full" src={historyEntry.abilityImage[0]} alt={historyEntry.abilityImage[1]} unoptimized={true} />
 
                                         <span className="absolute -bottom-0.5 -right-1 bg-gray-900 rounded-full px-0.5 py-px">{historyEntry.correct ? <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" /> : <XCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />}</span>
                                     </div>

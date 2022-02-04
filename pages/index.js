@@ -107,7 +107,7 @@ export default function Game({ championList }) {
         <div className="min-h-screen bg-gray-800 py-6 flex flex-col justify-center relative overflow-hidden sm:py-12">
             {championSplash && (
                 <div className="absolute inset-0">
-                    <Image className="h-full w-full object-cover" src={championSplash} layout="fill" alt={`${champion.name} Splash Art`} />
+                    <Image className="h-full w-full object-cover" src={championSplash} layout="fill" alt={`${champion.name} Splash Art`} unoptimized={true} />
                     <div className="absolute inset-0 bg-gray-500 mix-blend-multiply" />
                 </div>
             )}
@@ -138,7 +138,7 @@ export default function Game({ championList }) {
                     {champion ? (
                         <div className="">
                             <div className="mt-8 text-center">
-                                <Image id="abilityImg" src={abilityImage[0]} width={64} height={64} alt={abilityImage[1]} />
+                                <Image id="abilityImg" src={abilityImage[0]} width={64} height={64} alt={abilityImage[1]} unoptimized={true} />
                                 <h2 className="text-2xl font-bold">
                                     {champion.name} {abilityKey}
                                 </h2>
